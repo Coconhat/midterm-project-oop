@@ -84,7 +84,7 @@ void getValidQuantity(const string &label, int &amount)
         // Convert input to integer
         amount = stoi(input);
 
-        if (amount <= 0)
+        if (amount < 0)
         {
             cout << "Error: input must be greater than zero." << endl;
         }
@@ -92,6 +92,13 @@ void getValidQuantity(const string &label, int &amount)
         {
             break;
         }
+    }
+}
+void toUpperCase(string &str)
+{
+    for (char &c : str)
+    {
+        c = toupper(c);
     }
 }
 
@@ -124,15 +131,14 @@ public:
     static vector<Items> getDefaultItems()
     {
         return {
-            Items("P001", "Black and Gray Athletic Cotton Socks - 6 Pairs", 26, 180, "clothing"),
-            Items("P002", "Intermediate Size Basketball", 3, 1999, "entertainment"),
-            Items("P003", "Adults Plain Cotton T-Shirt - 2 Pack", 400, 799, "clothing"),
-            Items("P004", "Slot Toaster - Black", 120, 3000, "electronics"),
-            Items("P005", "White Dinner Plate Set", 123, 1499, "entertainment"),
-            Items("P006", "Nonstick, Carbon Steel Oven Bakeware Set", 4, 499, "entertainment"),
-            Items("P007", "Plain Hooded Fleece Sweatshirt", 83, 1199, "clothing"),
-            Items("P008", "Luxury Towel Set - Graphite Gray", 2, 999, "clothing"),
-            Items("P009", "Liquid Laundry Detergent, 110 Loads", 6, 799, "entertainment"),
+            Items("P001", "Black and Gray Athletic Cotton Socks - 6 Pairs", 26, 180, "CLOTHING"),
+            Items("P002", "Intermediate Size Basketball", 3, 1999, "ENTERTAINMENT"),
+            Items("P003", "Adults Plain Cotton T-Shirt - 2 Pack", 400, 799, "CLOTHING"),
+            Items("P004", "Slot Toaster - Black", 120, 3000, "ELETRCTONICS"),
+            Items("P005", "Legion 5 Laptop", 123, 45000, "ENTERTAINMENT"),
+            Items("P007", "Plain Hooded Fleece Sweatshirt", 83, 1199, "CLOTHING"),
+            Items("P008", "Luxury Towel Set - Graphite Gray", 2, 999, "CLOTHING"),
+            Items("P009", "PLAYSTATION 5", 6, 34000, "ENTERTAINMENT"),
         };
     }
 };
@@ -153,16 +159,40 @@ public:
     virtual void handleInput() = 0;
 
     virtual void updateItem(string id) = 0;
+    virtual void removeItems(string id) = 0;
 };
 
 class InventoryManager : public Inventory
 {
 public:
+    string getCategory()
+    {
+        string category;
+
+        while (true)
+        {
+            cout << "Input category: ";
+            cin >> category;
+            toUpperCase(category);
+            cout << category;
+
+            if (category == "CLOTHING" || category == "ELECTRONICS" || category == "ENTERTAINMENT")
+            {
+                return category;
+            }
+            else
+            {
+                cout << "\n\nCategory should only be\nCLOTHING\nELECTRONICS\nENTERTAINMENT\n\n";
+            }
+        }
+    }
     void addItem() override
     {
         string id, name, category;
         int quantity;
         double price;
+
+        category = getCategory();
 
         cout << "Adding item...\n";
         cout << "Enter ID: ";
@@ -174,9 +204,6 @@ public:
 
         getValidQuantity("quantity", quantity);
         getValidPrice("price", price);
-
-        cout << "\nEnter Product Category: ";
-        cin >> category;
 
         // Create a new Items object
         Items newItem(id, name, quantity, price, category);
@@ -217,7 +244,7 @@ public:
                         cout << "Invalid input. Please enter a valid price (0 or higher): ";
                         cin >> newPrice;
                     }
-                
+
                     cout << "\nSUCCESS!\nPrice of Item " << item.getName() << " updated from " << item.getPrice() << " to " << newPrice << endl;
                     item.setPrice(newPrice);
                 }
@@ -232,7 +259,7 @@ public:
                         cin >> newQuantity;
                     }
 
-                    cout << "Quantity of Item " << item.getName() << " updated from " << item.getQuantity() << " to " << newQuantity << endl;
+                    cout << "\n\nSUCCESS!\nQuantity of Item " << item.getName() << " updated from " << item.getQuantity() << " to " << newQuantity << endl;
                     item.setQuantity(newQuantity);
                 }
             }
@@ -241,6 +268,17 @@ public:
         if (!found)
         {
             cout << "Item with ID " << id << " not found!" << endl;
+        }
+    }
+
+    void removeItems(string id) override
+    {
+
+        for (const auto &item : items)
+        {
+            if (item.getId() == id)
+            {
+            }
         }
     }
 };
@@ -285,7 +323,11 @@ public:
             }
             else if (choice == "3")
             {
-                // Remove item
+                string id;
+                cout << "Input ID to remove: ";
+                cin >> id;
+
+                removeItems(id);
             }
             else if (choice == "4")
             {
