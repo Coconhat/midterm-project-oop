@@ -162,9 +162,8 @@ public:
     virtual void searchItem() = 0;
     virtual void sortItems() = 0;
     virtual void displayLowStockItems() = 0;
-
     virtual void updateItem() = 0;
-    virtual void removeItems(string id) = 0;
+    virtual void removeItems() = 0;
 };
 
 class InventoryManager : public Inventory
@@ -276,14 +275,29 @@ public:
         }
     }
 
-    void removeItems(string id) override
+    void removeItems() override
     {
+        bool found = false;
+        string id;
+        cout << "Input ID to remove: ";
+        cin >> id;
+        toUpperCase(id);
 
-        for (const auto &item : items)
+        for (auto it = items.begin(); it != items.end();)
         {
-            if (item.getId() == id)
+            if (it->getId() == id)
             {
+                found = true;
+                it = items.erase(it); 
+                cout << "\nItem " <<it->getName() << " \nwith ID of " << it->getId() << " has been removed.\n";
             }
+            else
+            {
+                ++it; 
+            }
+        }
+        if (!found){
+            cout << "\nID " << id << " NOT FOUND\n";
         }
     }
 
@@ -334,22 +348,21 @@ public:
         cout << "\nSort by: \n1 - Quantity\n2 - Price\n";
         cin >> choice;
 
-        while (choice != "1" && choice != "2") 
+        while (choice != "1" && choice != "2")
         {
             cout << "ERROR: input 1 or 2 only \n";
-            cout << "\nSort by: \n1 - Quantity\n2 - Price\n"; 
-            cin >> choice;                                    
+            cout << "\nSort by: \n1 - Quantity\n2 - Price\n";
+            cin >> choice;
         }
 
-       
         cout << "\nSort order: \n1 - Ascending\n2 - Descending\n";
         cin >> order;
 
-        while (order != "1" && order != "2") 
+        while (order != "1" && order != "2")
         {
             cout << "ERROR: input 1 or 2 only \n";
-            cout << "\nSort order: \n1 - Ascending\n2 - Descending\n"; 
-            cin >> order;                                              
+            cout << "\nSort order: \n1 - Ascending\n2 - Descending\n";
+            cin >> order;
         }
 
         bool ascending = (order == "1");
@@ -387,7 +400,6 @@ public:
             }
         }
 
-        
         displaySortedItems();
     }
 
@@ -451,17 +463,13 @@ public:
             }
             else if (choice == "3") // remove items
             {
-                string id;
-                cout << "Input ID to remove: ";
-                cin >> id;
-
-                removeItems(id);
+                removeItems();
             }
             else if (choice == "4") // Display items by category
             {
                 displayItemsByCategory();
             }
-            else if (choice == "5")
+            else if (choice == "5") // display all items
             {
                 displayAllItems();
             }
