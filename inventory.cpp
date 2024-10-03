@@ -302,7 +302,7 @@ public:
              << right << setw(10) << "Quantity"
              << right << setw(10) << "Price"
              << right << setw(20) << "Category" << endl;
-                cout << "------------------------------------------------------------\n";
+        cout << "------------------------------------------------------------\n";
 
         for (const auto &item : items)
         {
@@ -328,16 +328,31 @@ public:
 
     void sortItems()
     {
-        int choice;
-        int order;
+        string choice;
+        string order;
 
         cout << "\nSort by: \n1 - Quantity\n2 - Price\n";
         cin >> choice;
 
+        while (choice != "1" && choice != "2") 
+        {
+            cout << "ERROR: input 1 or 2 only \n";
+            cout << "\nSort by: \n1 - Quantity\n2 - Price\n"; 
+            cin >> choice;                                    
+        }
+
+       
         cout << "\nSort order: \n1 - Ascending\n2 - Descending\n";
         cin >> order;
 
-        bool ascending = (order == 1);
+        while (order != "1" && order != "2") 
+        {
+            cout << "ERROR: input 1 or 2 only \n";
+            cout << "\nSort order: \n1 - Ascending\n2 - Descending\n"; 
+            cin >> order;                                              
+        }
+
+        bool ascending = (order == "1");
 
         // Bubble Sort
         for (size_t i = 0; i < items.size() - 1; ++i)
@@ -346,7 +361,7 @@ public:
             {
                 bool swapNeeded = false;
 
-                if (choice == 1)
+                if (choice == "1")
                 { // Sort by Quantity
                     if ((ascending && items[j].getQuantity() > items[j + 1].getQuantity()) ||
                         (!ascending && items[j].getQuantity() < items[j + 1].getQuantity()))
@@ -354,7 +369,7 @@ public:
                         swapNeeded = true;
                     }
                 }
-                else if (choice == 2)
+                else if (choice == "2")
                 { // Sort by Price
                     if ((ascending && items[j].getPrice() > items[j + 1].getPrice()) ||
                         (!ascending && items[j].getPrice() < items[j + 1].getPrice()))
@@ -372,7 +387,7 @@ public:
             }
         }
 
-        // Display the sorted items in a table format
+        
         displaySortedItems();
     }
 
@@ -460,13 +475,13 @@ public:
             }
             else if (choice == "8") // Display low stock items
             {
-                
+
                 displayLowStockItems();
             }
-            else if (choice == "9")
+            else if (choice == "9") // exit the program
             {
                 cout << "Exiting program...\n";
-                exit(0); // exit the program
+                exit(0);
             }
             else
             {
@@ -556,7 +571,6 @@ public:
                      << right << setw(10) << item.getQuantity()
                      << right << setw(10) << fixed << setprecision(2) << item.getPrice()
                      << right << setw(20) << item.getCategory() << endl;
-
             }
         }
     }
