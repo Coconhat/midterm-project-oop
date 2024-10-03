@@ -136,10 +136,10 @@ public:
             Items("P002", "Intermediate Size Basketball", 3, 1999, "ENTERTAINMENT"),
             Items("P003", "Adults Plain Cotton T-Shirt - 2 Pack", 400, 799, "CLOTHING"),
             Items("P004", "Slot Toaster - Black", 120, 3000, "ELECTRONICS"),
-            Items("P005", "Legion 5 Laptop", 123, 45000, "ENTERTAINMENT"),
+            Items("P005", "Legion 5 Laptop", 2, 45000, "ENTERTAINMENT"),
             Items("P007", "Plain Hooded Fleece Sweatshirt", 83, 1199, "CLOTHING"),
             Items("P008", "Parasonic Rice cooker", 12, 1500, "ELECTRONICS"),
-            Items("P009", "PLAYSTATION 5", 6, 34000, "ENTERTAINMENT"),
+            Items("P009", "PLAYSTATION 5", 5, 34000, "ENTERTAINMENT"),
         };
     }
 };
@@ -161,6 +161,7 @@ public:
     virtual void displayItemsByCategory() = 0;
     virtual void searchItem() = 0;
     virtual void sortItems() = 0;
+    virtual void displayLowStockItems() = 0;
 
     virtual void updateItem() = 0;
     virtual void removeItems(string id) = 0;
@@ -299,8 +300,9 @@ public:
         cout << left << setw(10) << "ID"
              << left << setw(40) << "Name"
              << right << setw(10) << "Quantity"
-             << right << setw(10) << "Price" << endl;
-        cout << "------------------------------------------------------------\n";
+             << right << setw(10) << "Price"
+             << right << setw(20) << "Category" << endl;
+                cout << "------------------------------------------------------------\n";
 
         for (const auto &item : items)
         {
@@ -311,7 +313,8 @@ public:
                 cout << left << setw(10) << item.getId()
                      << left << setw(40) << item.getName()
                      << right << setw(10) << item.getQuantity()
-                     << right << setw(10) << fixed << setprecision(2) << item.getPrice() << endl;
+                     << right << setw(10) << fixed << setprecision(2) << item.getPrice()
+                     << right << setw(20) << "Category" << endl;
                 cout << "------------------------------------------------------------\n";
                 break;
             }
@@ -325,18 +328,16 @@ public:
 
     void sortItems()
     {
-        int choice; 
-        int order;  
+        int choice;
+        int order;
 
-       
         cout << "\nSort by: \n1 - Quantity\n2 - Price\n";
         cin >> choice;
 
-        
         cout << "\nSort order: \n1 - Ascending\n2 - Descending\n";
         cin >> order;
 
-        bool ascending = (order == 1); 
+        bool ascending = (order == 1);
 
         // Bubble Sort
         for (size_t i = 0; i < items.size() - 1; ++i)
@@ -362,7 +363,6 @@ public:
                     }
                 }
 
-                
                 if (swapNeeded)
                 {
                     Items temp = items[j];
@@ -383,7 +383,9 @@ public:
         cout << left << setw(10) << "ID"
              << left << setw(40) << "Name"
              << right << setw(10) << "Quantity"
-             << right << setw(10) << "Price" << endl;
+             << right << setw(10) << "Price"
+             << right << setw(20) << "Category" << endl;
+
         cout << "------------------------------------------------------------\n";
 
         for (const auto &item : items)
@@ -391,7 +393,8 @@ public:
             cout << left << setw(10) << item.getId()
                  << left << setw(40) << item.getName()
                  << right << setw(10) << item.getQuantity()
-                 << right << setw(10) << fixed << setprecision(2) << item.getPrice() << endl;
+                 << right << setw(10) << fixed << setprecision(2) << item.getPrice()
+                 << right << setw(20) << item.getCategory() << endl;
         }
 
         cout << "------------------------------------------------------------\n";
@@ -455,9 +458,10 @@ public:
             {
                 sortItems();
             }
-            else if (choice == "8")
+            else if (choice == "8") // Display low stock items
             {
-                // Display low stock items
+                
+                displayLowStockItems();
             }
             else if (choice == "9")
             {
@@ -477,7 +481,8 @@ public:
         cout << left << setw(10) << "ID"
              << left << setw(40) << "Name"
              << right << setw(10) << "Quantity"
-             << right << setw(10) << "Price" << endl;
+             << right << setw(10) << "Price"
+             << right << setw(20) << "Category" << endl;
         cout << "------------------------------------------------------------\n";
 
         for (const auto &item : items)
@@ -485,7 +490,8 @@ public:
             cout << left << setw(10) << item.getId()
                  << left << setw(40) << item.getName()
                  << right << setw(10) << item.getQuantity()
-                 << right << setw(10) << fixed << setprecision(2) << item.getPrice() << endl;
+                 << right << setw(10) << fixed << setprecision(2) << item.getPrice()
+                 << right << setw(20) << item.getCategory() << endl;
         }
 
         cout << "------------------------------------------------------------\n";
@@ -498,13 +504,14 @@ public:
 
         cout << "Enter category to display: ";
         cin >> category;
-        toUpperCase(category); 
+        toUpperCase(category);
 
         cout << "------------------------------------------------------------\n";
         cout << left << setw(10) << "ID"
              << left << setw(40) << "Name"
              << right << setw(10) << "Quantity"
-             << right << setw(10) << "Price" << endl;
+             << right << setw(10) << "Price"
+             << right << setw(20) << "Category" << endl;
         cout << "------------------------------------------------------------\n";
 
         for (const auto &item : items)
@@ -515,7 +522,8 @@ public:
                 cout << left << setw(10) << item.getId()
                      << left << setw(40) << item.getName()
                      << right << setw(10) << item.getQuantity()
-                     << right << setw(10) << fixed << setprecision(2) << item.getPrice() << endl;
+                     << right << setw(10) << fixed << setprecision(2) << item.getPrice()
+                     << right << setw(20) << item.getCategory() << endl;
             }
         }
 
@@ -524,6 +532,32 @@ public:
         if (!found)
         {
             cout << "\nNo items found in the category: " << category << endl;
+        }
+    }
+
+    void displayLowStockItems() override
+    {
+        cout << "------------------------------------------------------------\n";
+        cout << left << setw(10) << "ID"
+             << left << setw(40) << "Name"
+             << right << setw(10) << "Quantity"
+             << right << setw(10) << "Price"
+             << right << setw(20) << "Category" << endl;
+
+        cout << "------------------------------------------------------------\n";
+
+        for (const auto item : items)
+        {
+            if (item.getQuantity() <= 5)
+            {
+
+                cout << left << setw(10) << item.getId()
+                     << left << setw(40) << item.getName()
+                     << right << setw(10) << item.getQuantity()
+                     << right << setw(10) << fixed << setprecision(2) << item.getPrice()
+                     << right << setw(20) << item.getCategory() << endl;
+
+            }
         }
     }
 };
