@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <iomanip>
 using namespace std;
 
 // Function to check if input is a valid numeric string
@@ -131,7 +132,7 @@ public:
     static vector<Items> getDefaultItems()
     {
         return {
-            Items("P001", "Black and Gray Athletic Cotton Socks - 6 Pairs", 26, 180, "CLOTHING"),
+            Items("P001", "Black and Gray Athletic Cotton Socks", 26, 180, "CLOTHING"),
             Items("P002", "Intermediate Size Basketball", 3, 1999, "ENTERTAINMENT"),
             Items("P003", "Adults Plain Cotton T-Shirt - 2 Pack", 400, 799, "CLOTHING"),
             Items("P004", "Slot Toaster - Black", 120, 3000, "ELECTRONICS"),
@@ -159,6 +160,7 @@ public:
     virtual void handleInput() = 0;
     virtual void displayItemsByCategory() = 0;
     virtual void searchItem() = 0;
+    virtual void sortItems() = 0;
 
     virtual void updateItem() = 0;
     virtual void removeItems(string id) = 0;
@@ -230,45 +232,38 @@ public:
             if (item.getId() == id)
             {
                 found = true;
-                char choice;
+                string choiceInput;
                 cout << "\nID FOUND\n";
-                cout << "Press P to update price\nPress Q to update quantity: ";
-                cin >> choice;
-                choice = toupper(choice);
+                cout << item.getName() << endl;
 
-                while (choice != 'P' && choice != 'Q')
+                // Input choice for update
+                while (found)
                 {
-                    cout << "Enter P or Q only: ";
-                    cin >> choice;
-                    choice = toupper(choice);
+                    cout << "Press 1 to update price\nPress 2 to update quantity: ";
+                    cin >> choiceInput;
+
+                    if (choiceInput == "1" || choiceInput == "2")
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        cout << "\nError: Please enter 1 or 2 only." << endl;
+                    }
                 }
 
-                if (choice == 'P')
+                if (choiceInput == "1")
                 {
                     double newPrice;
                     getValidPrice("new price", newPrice);
-
-                    while (newPrice < 0)
-                    {
-                        cout << "Invalid input. Please enter a valid price (0 or higher): ";
-                        cin >> newPrice;
-                    }
-
                     cout << "\nSUCCESS!\nPrice of Item " << item.getName() << " updated from " << item.getPrice() << " to " << newPrice << endl;
                     item.setPrice(newPrice);
                 }
-                else if (choice == 'Q')
+                else if (choiceInput == "2")
                 {
                     int newQuantity;
                     getValidQuantity("new quantity", newQuantity);
-
-                    while (newQuantity < 0)
-                    {
-                        cout << "Invalid input. Please enter a valid quantity (0 or higher): ";
-                        cin >> newQuantity;
-                    }
-
-                    cout << "\n\nSUCCESS!\nQuantity of Item " << item.getName() << " updated from " << item.getQuantity() << " to " << newQuantity << endl;
+                    cout << "\nSUCCESS!\nQuantity of Item " << item.getName() << " updated from " << item.getQuantity() << " to " << newQuantity << endl;
                     item.setQuantity(newQuantity);
                 }
             }
@@ -294,32 +289,114 @@ public:
     void searchItem() override
     {
         bool found = false;
-
         string id;
 
         cout << "Enter product's ID to search: ";
         cin >> id;
         toUpperCase(id);
+
+        cout << "------------------------------------------------------------\n";
+        cout << left << setw(10) << "ID"
+             << left << setw(40) << "Name"
+             << right << setw(10) << "Quantity"
+             << right << setw(10) << "Price" << endl;
+        cout << "------------------------------------------------------------\n";
+
         for (const auto &item : items)
         {
             if (item.getId() == id)
             {
                 found = true;
-                cout << "\n\nProduct FOUND!\n";
-                cout << "ID: " << item.getId() << endl;
-                cout << "Category: " << item.getCategory() << endl;
-                cout << "Name: " << item.getName() << endl;
-                cout << "Price: " << item.getPrice() << endl;
-                cout << "Quantity: " << item.getQuantity() << endl;
+
+                cout << left << setw(10) << item.getId()
+                     << left << setw(40) << item.getName()
+                     << right << setw(10) << item.getQuantity()
+                     << right << setw(10) << fixed << setprecision(2) << item.getPrice() << endl;
+                cout << "------------------------------------------------------------\n";
+                break;
             }
         }
+
         if (!found)
         {
-            cout << "Product with ID: " << id << " not FOUND!";
+            cout << "Product with ID: " << id << " not FOUND!" << endl;
         }
     }
-};
 
+    void sortItems()
+    {
+        int choice; 
+        int order;  
+
+       
+        cout << "\nSort by: \n1 - Quantity\n2 - Price\n";
+        cin >> choice;
+
+        
+        cout << "\nSort order: \n1 - Ascending\n2 - Descending\n";
+        cin >> order;
+
+        bool ascending = (order == 1); 
+
+        // Bubble Sort
+        for (size_t i = 0; i < items.size() - 1; ++i)
+        {
+            for (size_t j = 0; j < items.size() - i - 1; ++j)
+            {
+                bool swapNeeded = false;
+
+                if (choice == 1)
+                { // Sort by Quantity
+                    if ((ascending && items[j].getQuantity() > items[j + 1].getQuantity()) ||
+                        (!ascending && items[j].getQuantity() < items[j + 1].getQuantity()))
+                    {
+                        swapNeeded = true;
+                    }
+                }
+                else if (choice == 2)
+                { // Sort by Price
+                    if ((ascending && items[j].getPrice() > items[j + 1].getPrice()) ||
+                        (!ascending && items[j].getPrice() < items[j + 1].getPrice()))
+                    {
+                        swapNeeded = true;
+                    }
+                }
+
+                
+                if (swapNeeded)
+                {
+                    Items temp = items[j];
+                    items[j] = items[j + 1];
+                    items[j + 1] = temp;
+                }
+            }
+        }
+
+        // Display the sorted items in a table format
+        displaySortedItems();
+    }
+
+    void displaySortedItems()
+    {
+        cout << "\nSorted Items:\n";
+        cout << "------------------------------------------------------------\n";
+        cout << left << setw(10) << "ID"
+             << left << setw(40) << "Name"
+             << right << setw(10) << "Quantity"
+             << right << setw(10) << "Price" << endl;
+        cout << "------------------------------------------------------------\n";
+
+        for (const auto &item : items)
+        {
+            cout << left << setw(10) << item.getId()
+                 << left << setw(40) << item.getName()
+                 << right << setw(10) << item.getQuantity()
+                 << right << setw(10) << fixed << setprecision(2) << item.getPrice() << endl;
+        }
+
+        cout << "------------------------------------------------------------\n";
+    }
+};
 class Display : public InventoryManager
 {
 public:
@@ -364,7 +441,6 @@ public:
             }
             else if (choice == "4") // Display items by category
             {
-
                 displayItemsByCategory();
             }
             else if (choice == "5")
@@ -375,9 +451,9 @@ public:
             {
                 searchItem();
             }
-            else if (choice == "7")
+            else if (choice == "7") // Sort items
             {
-                // Sort items
+                sortItems();
             }
             else if (choice == "8")
             {
@@ -397,41 +473,53 @@ public:
 
     void displayAllItems() override
     {
+        cout << "------------------------------------------------------------\n";
+        cout << left << setw(10) << "ID"
+             << left << setw(40) << "Name"
+             << right << setw(10) << "Quantity"
+             << right << setw(10) << "Price" << endl;
+        cout << "------------------------------------------------------------\n";
+
         for (const auto &item : items)
         {
-            cout << "ID: " << item.getId() << endl;
-            cout << "Name: " << item.getName() << endl;
-            cout << "Quantity: " << item.getQuantity() << endl;
-            cout << "Price: " << item.getPrice() << endl;
-            cout << "Category: " << item.getCategory() << endl
-                 << endl;
+            cout << left << setw(10) << item.getId()
+                 << left << setw(40) << item.getName()
+                 << right << setw(10) << item.getQuantity()
+                 << right << setw(10) << fixed << setprecision(2) << item.getPrice() << endl;
         }
+
+        cout << "------------------------------------------------------------\n";
     }
 
     void displayItemsByCategory() override
     {
-
         string category;
         bool found = false;
 
         cout << "Enter category to display: ";
         cin >> category;
-        toUpperCase(category);
+        toUpperCase(category); 
+
+        cout << "------------------------------------------------------------\n";
+        cout << left << setw(10) << "ID"
+             << left << setw(40) << "Name"
+             << right << setw(10) << "Quantity"
+             << right << setw(10) << "Price" << endl;
+        cout << "------------------------------------------------------------\n";
 
         for (const auto &item : items)
         {
             if (category == item.getCategory())
             {
                 found = true;
-                // Display the item details
-                cout << "ID: " << item.getId() << endl;
-                cout << "Name: " << item.getName() << endl;
-                cout << "Quantity: " << item.getQuantity() << endl;
-                cout << "Price: " << item.getPrice() << endl;
-                cout << "Category: " << item.getCategory() << endl
-                     << endl;
+                cout << left << setw(10) << item.getId()
+                     << left << setw(40) << item.getName()
+                     << right << setw(10) << item.getQuantity()
+                     << right << setw(10) << fixed << setprecision(2) << item.getPrice() << endl;
             }
         }
+
+        cout << "------------------------------------------------------------\n";
 
         if (!found)
         {
