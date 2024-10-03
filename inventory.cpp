@@ -160,7 +160,7 @@ public:
     virtual void displayItemsByCategory() = 0;
     virtual void searchItem() = 0;
 
-    virtual void updateItem(string id) = 0;
+    virtual void updateItem() = 0;
     virtual void removeItems(string id) = 0;
 };
 
@@ -217,8 +217,13 @@ public:
         cout << "\nItem added successfully!\n";
     }
 
-    void updateItem(string id) override
+    void updateItem() override
     {
+        string id;
+        cout << "Input ID: ";
+        cin >> id;
+        toUpperCase(id);
+
         bool found = false;
         for (auto &item : items)
         {
@@ -347,11 +352,7 @@ public:
             }
             else if (choice == "2") // update items
             {
-                string id;
-                cout << "Input ID: ";
-                cin >> id;
-
-                updateItem(id);
+                updateItem();
             }
             else if (choice == "3") // remove items
             {
@@ -372,7 +373,6 @@ public:
             }
             else if (choice == "6") // Search item
             {
-
                 searchItem();
             }
             else if (choice == "7")
