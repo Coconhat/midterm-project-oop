@@ -134,10 +134,10 @@ public:
             Items("P001", "Black and Gray Athletic Cotton Socks - 6 Pairs", 26, 180, "CLOTHING"),
             Items("P002", "Intermediate Size Basketball", 3, 1999, "ENTERTAINMENT"),
             Items("P003", "Adults Plain Cotton T-Shirt - 2 Pack", 400, 799, "CLOTHING"),
-            Items("P004", "Slot Toaster - Black", 120, 3000, "ELETRCTONICS"),
+            Items("P004", "Slot Toaster - Black", 120, 3000, "ELECTRONICS"),
             Items("P005", "Legion 5 Laptop", 123, 45000, "ENTERTAINMENT"),
             Items("P007", "Plain Hooded Fleece Sweatshirt", 83, 1199, "CLOTHING"),
-            Items("P008", "Luxury Towel Set - Graphite Gray", 2, 999, "CLOTHING"),
+            Items("P008", "Parasonic Rice cooker", 12, 1500, "ELECTRONICS"),
             Items("P009", "PLAYSTATION 5", 6, 34000, "ENTERTAINMENT"),
         };
     }
@@ -157,6 +157,8 @@ public:
     virtual void displayAllItems() = 0;
     virtual void addItem() = 0;
     virtual void handleInput() = 0;
+    virtual void displayItemsByCategory() = 0;
+    virtual void searchItem() = 0;
 
     virtual void updateItem(string id) = 0;
     virtual void removeItems(string id) = 0;
@@ -174,7 +176,6 @@ public:
             cout << "Input category: ";
             cin >> category;
             toUpperCase(category);
-            cout << category;
 
             if (category == "CLOTHING" || category == "ELECTRONICS" || category == "ENTERTAINMENT")
             {
@@ -186,6 +187,7 @@ public:
             }
         }
     }
+
     void addItem() override
     {
         string id, name, category;
@@ -197,6 +199,8 @@ public:
         cout << "Adding item...\n";
         cout << "Enter ID: ";
         cin >> id;
+        toUpperCase(id);
+        ;
 
         cout << "\nEnter Product Name: ";
         cin.ignore();
@@ -267,7 +271,7 @@ public:
 
         if (!found)
         {
-            cout << "Item with ID " << id << " not found!" << endl;
+            cout << "Item with ID " << id << " not FOUND!" << endl;
         }
     }
 
@@ -279,6 +283,34 @@ public:
             if (item.getId() == id)
             {
             }
+        }
+    }
+
+    void searchItem() override
+    {
+        bool found = false;
+
+        string id;
+
+        cout << "Enter product's ID to search: ";
+        cin >> id;
+        toUpperCase(id);
+        for (const auto &item : items)
+        {
+            if (item.getId() == id)
+            {
+                found = true;
+                cout << "\n\nProduct FOUND!\n";
+                cout << "ID: " << item.getId() << endl;
+                cout << "Category: " << item.getCategory() << endl;
+                cout << "Name: " << item.getName() << endl;
+                cout << "Price: " << item.getPrice() << endl;
+                cout << "Quantity: " << item.getQuantity() << endl;
+            }
+        }
+        if (!found)
+        {
+            cout << "Product with ID: " << id << " not FOUND!";
         }
     }
 };
@@ -321,7 +353,7 @@ public:
 
                 updateItem(id);
             }
-            else if (choice == "3")
+            else if (choice == "3") // remove items
             {
                 string id;
                 cout << "Input ID to remove: ";
@@ -329,17 +361,19 @@ public:
 
                 removeItems(id);
             }
-            else if (choice == "4")
+            else if (choice == "4") // Display items by category
             {
-                // Display items by category
+
+                displayItemsByCategory();
             }
             else if (choice == "5")
             {
                 displayAllItems();
             }
-            else if (choice == "6")
+            else if (choice == "6") // Search item
             {
-                // Search item
+
+                searchItem();
             }
             else if (choice == "7")
             {
@@ -371,6 +405,37 @@ public:
             cout << "Price: " << item.getPrice() << endl;
             cout << "Category: " << item.getCategory() << endl
                  << endl;
+        }
+    }
+
+    void displayItemsByCategory() override
+    {
+
+        string category;
+        bool found = false;
+
+        cout << "Enter category to display: ";
+        cin >> category;
+        toUpperCase(category);
+
+        for (const auto &item : items)
+        {
+            if (category == item.getCategory())
+            {
+                found = true;
+                // Display the item details
+                cout << "ID: " << item.getId() << endl;
+                cout << "Name: " << item.getName() << endl;
+                cout << "Quantity: " << item.getQuantity() << endl;
+                cout << "Price: " << item.getPrice() << endl;
+                cout << "Category: " << item.getCategory() << endl
+                     << endl;
+            }
+        }
+
+        if (!found)
+        {
+            cout << "\nNo items found in the category: " << category << endl;
         }
     }
 };
