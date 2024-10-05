@@ -128,20 +128,7 @@ public:
     void setPrice(double newPrice) { price = newPrice; }
     void setCategory(const string &newCategory) { category = newCategory; }
 
-    // Static function to initialize a list of items inside the Items class
-    static vector<Items> getDefaultItems()
-    {
-        return {
-            Items("P001", "Black and Gray Athletic Cotton Socks", 26, 180, "CLOTHING"),
-            Items("P002", "Intermediate Size Basketball", 3, 1999, "ENTERTAINMENT"),
-            Items("P003", "Adults Plain Cotton T-Shirt - 2 Pack", 400, 799, "CLOTHING"),
-            Items("P004", "Slot Toaster - Black", 120, 3000, "ELECTRONICS"),
-            Items("P005", "Legion 5 Laptop", 2, 45000, "ENTERTAINMENT"),
-            Items("P007", "Plain Hooded Fleece Sweatshirt", 83, 1199, "CLOTHING"),
-            Items("P008", "Parasonic Rice cooker", 12, 1500, "ELECTRONICS"),
-            Items("P009", "PLAYSTATION 5", 5, 34000, "ENTERTAINMENT"),
-        };
-    }
+
 };
 
 class Inventory
@@ -150,10 +137,7 @@ protected:
     vector<Items> items;
 
 public:
-    Inventory()
-    {
-        items = Items::getDefaultItems();
-    }
+    
 
     virtual void displayAllItems() = 0;
     virtual void addItem() = 0;
@@ -317,6 +301,12 @@ public:
 
     void searchItem() override
     {
+        if (items.empty())
+        {
+            cout << "\n\nNo items to search.\n";
+            return;
+        }
+
         bool found = false;
         string id;
 
@@ -356,6 +346,12 @@ public:
 
     void sortItems()
     {
+        if (items.empty())
+        {
+            cout << "\n\nNo items to display.\n";
+            return;
+        }
+
         string choice;
         string order;
 
@@ -514,6 +510,11 @@ public:
 
     void displayAllItems() override
     {
+        if (items.empty())
+        {
+            cout << "\n\nNo items to display.\n";
+            return;
+        }
         cout << "------------------------------------------------------------\n";
         cout << left << setw(10) << "ID"
              << left << setw(40) << "Name"
@@ -536,12 +537,33 @@ public:
 
     void displayItemsByCategory() override
     {
+        if (items.empty())
+        {
+            cout << "\n\nNo items to display.\n";
+            return;
+        }
+
         string category;
         bool found = false;
 
         cout << "Enter category to display (clothing, electronics, entertainment): ";
         cin >> category;
-        toUpperCase(category);
+        toUpperCase(category); 
+
+        for (const auto &item : items)
+        {
+            if (category == item.getCategory())
+            {
+                found = true;
+                break; 
+            }
+        }
+
+        if (!found)
+        {
+            cout << "\nNo items found in the category: " << category << ".\n"; 
+            return;                                                            
+        }
 
         cout << "------------------------------------------------------------\n";
         cout << left << setw(10) << "ID"
@@ -555,7 +577,6 @@ public:
         {
             if (category == item.getCategory())
             {
-                found = true;
                 cout << left << setw(10) << item.getId()
                      << left << setw(40) << item.getName()
                      << right << setw(10) << item.getQuantity()
@@ -565,15 +586,33 @@ public:
         }
 
         cout << "------------------------------------------------------------\n";
-
-        if (!found)
-        {
-            cout << "\nNo items found in the category: " << category << endl;
-        }
     }
 
     void displayLowStockItems() override
     {
+        if (items.empty())
+        {
+            cout << "\n\nNo items to display.\n";
+            return;
+        }
+
+        bool found = false; 
+
+        for (const auto &item : items)
+        {
+            if (item.getQuantity() <= 5)
+            {
+                found = true;
+                break; 
+            }
+        }
+
+        if (!found)
+        {
+            cout << "\nNo low stock items found.\n"; 
+            return;                                  
+        }
+
         cout << "------------------------------------------------------------\n";
         cout << left << setw(10) << "ID"
              << left << setw(40) << "Name"
@@ -583,11 +622,10 @@ public:
 
         cout << "------------------------------------------------------------\n";
 
-        for (const auto item : items)
+        for (const auto &item : items)
         {
             if (item.getQuantity() <= 5)
             {
-
                 cout << left << setw(10) << item.getId()
                      << left << setw(40) << item.getName()
                      << right << setw(10) << item.getQuantity()
@@ -595,6 +633,8 @@ public:
                      << right << setw(20) << item.getCategory() << endl;
             }
         }
+
+        cout << "------------------------------------------------------------\n";
     }
 };
 
