@@ -127,8 +127,6 @@ public:
     void setQuantity(int newQuantity) { quantity = newQuantity; }
     void setPrice(double newPrice) { price = newPrice; }
     void setCategory(const string &newCategory) { category = newCategory; }
-
-
 };
 
 class Inventory
@@ -137,8 +135,6 @@ protected:
     vector<Items> items;
 
 public:
-    
-
     virtual void displayAllItems() = 0;
     virtual void addItem() = 0;
     virtual void handleInput() = 0;
@@ -169,7 +165,7 @@ public:
             toUpperCase(category);
         }
 
-        return category; 
+        return category;
     }
 
     void addItem() override
@@ -189,12 +185,12 @@ public:
             cin >> id;
             toUpperCase(id);
 
-            isDuplicate = false; 
+            isDuplicate = false;
             for (const auto &item : items)
             {
                 if (item.getId() == id)
                 {
-                    isDuplicate = true; 
+                    isDuplicate = true;
                     cout << "ERROR: An item already has that ID, please enter another ID.\n";
                     break;
                 }
@@ -218,6 +214,11 @@ public:
 
     void updateItem() override
     {
+        if (items.empty())
+        {
+            cout << "\n\nNo items to update.\n";
+            return;
+        }
         string id;
         cout << "Input ID: ";
         cin >> id;
@@ -233,7 +234,6 @@ public:
                 cout << "\nID FOUND\n";
                 cout << item.getName() << endl;
 
-                // Input choice for update
                 while (found)
                 {
                     cout << "Press 1 to update price\nPress 2 to update quantity: ";
@@ -274,6 +274,12 @@ public:
 
     void removeItems() override
     {
+        if (items.empty())
+        {
+            cout << "\n\nNo items to remove.\n";
+            return;
+        }
+
         bool found = false;
         string id;
         cout << "Input ID to remove: ";
@@ -348,7 +354,7 @@ public:
     {
         if (items.empty())
         {
-            cout << "\n\nNo items to display.\n";
+            cout << "\n\nNo items to sort.\n";
             return;
         }
 
@@ -548,21 +554,21 @@ public:
 
         cout << "Enter category to display (clothing, electronics, entertainment): ";
         cin >> category;
-        toUpperCase(category); 
+        toUpperCase(category);
 
         for (const auto &item : items)
         {
             if (category == item.getCategory())
             {
                 found = true;
-                break; 
+                break;
             }
         }
 
         if (!found)
         {
-            cout << "\nNo items found in the category: " << category << ".\n"; 
-            return;                                                            
+            cout << "\nNo items found in the category: " << category << ".\n";
+            return;
         }
 
         cout << "------------------------------------------------------------\n";
@@ -596,21 +602,21 @@ public:
             return;
         }
 
-        bool found = false; 
+        bool found = false;
 
         for (const auto &item : items)
         {
             if (item.getQuantity() <= 5)
             {
                 found = true;
-                break; 
+                break;
             }
         }
 
         if (!found)
         {
-            cout << "\nNo low stock items found.\n"; 
-            return;                                  
+            cout << "\nNo low stock items found.\n";
+            return;
         }
 
         cout << "------------------------------------------------------------\n";
