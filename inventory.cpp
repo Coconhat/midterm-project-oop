@@ -173,21 +173,19 @@ public:
     {
         string category;
 
-        while (true)
+        cout << "Input category: ";
+        cin >> category;
+        toUpperCase(category);
+
+        while (category != "CLOTHING" && category != "ELECTRONICS" && category != "ENTERTAINMENT")
         {
+            cout << "\nERROR: Category should only be\nCLOTHING\nELECTRONICS\nENTERTAINMENT\n\n";
             cout << "Input category: ";
             cin >> category;
             toUpperCase(category);
-
-            if (category == "CLOTHING" || category == "ELECTRONICS" || category == "ENTERTAINMENT")
-            {
-                return category;
-            }
-            else
-            {
-                cout << "\n\nCategory should only be\nCLOTHING\nELECTRONICS\nENTERTAINMENT\n\n";
-            }
         }
+
+        return category; 
     }
 
     void addItem() override
@@ -199,10 +197,25 @@ public:
         category = getCategory();
 
         cout << "Adding item...\n";
-        cout << "Enter ID: ";
-        cin >> id;
-        toUpperCase(id);
-        ;
+
+        bool isDuplicate = true;
+        while (isDuplicate)
+        {
+            cout << "Enter ID: ";
+            cin >> id;
+            toUpperCase(id);
+
+            isDuplicate = false; 
+            for (const auto &item : items)
+            {
+                if (item.getId() == id)
+                {
+                    isDuplicate = true; 
+                    cout << "ERROR: An item already has that ID, please enter another ID.\n";
+                    break;
+                }
+            }
+        }
 
         cout << "\nEnter Product Name: ";
         cin.ignore();
@@ -288,15 +301,16 @@ public:
             if (it->getId() == id)
             {
                 found = true;
-                it = items.erase(it); 
-                cout << "\nItem " <<it->getName() << " \nwith ID of " << it->getId() << " has been removed.\n";
+                it = items.erase(it);
+                cout << "\nItem " << it->getName() << " \nwith ID of " << it->getId() << " has been removed.\n";
             }
             else
             {
-                ++it; 
+                ++it;
             }
         }
-        if (!found){
+        if (!found)
+        {
             cout << "\nID " << id << " NOT FOUND\n";
         }
     }
@@ -525,7 +539,7 @@ public:
         string category;
         bool found = false;
 
-        cout << "Enter category to display: ";
+        cout << "Enter category to display (clothing, electronics, entertainment): ";
         cin >> category;
         toUpperCase(category);
 
